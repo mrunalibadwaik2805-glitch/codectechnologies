@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>AI Resume Job Matcher</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <h1>🤖 AI Resume–Job Matching System</h1>
+
+    <p class="subtitle">
+        NLP-powered resume screening and candidate ranking
+    </p>
+
+
+    <!-- SUCCESS / ERROR MESSAGE -->
+
+    {% if success %}
+        <div class="message success">
+            {{ success }}
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="message error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+
+    <!-- RESUME UPLOAD -->
+
+    <div class="card">
+
+        <h2>📄 Upload Resume</h2>
+
+        <form
+            action="/upload"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <label>Name</label>
+
+            <input
+                type="text"
+                name="name"
+                value="{{ name or '' }}"
+                placeholder="Enter candidate name"
+                required
+            >
+
+
+            <label>Email</label>
+
+            <input
+                type="email"
+                name="email"
+                value="{{ email or '' }}"
+                placeholder="Enter email address"
+                required
+            >
+
+
+            <label>Resume</label>
+
+            <input
+                type="file"
+                name="resume"
+                accept=".pdf,.docx,.txt"
+                required
+            >
+
+
+            <button type="submit">
+                Upload Resume
+            </button>
+
+        </form>
+
+
+        {% if resume_filename %}
+
+            <p class="uploaded">
+                ✅ Uploaded Resume:
+                <strong>{{ resume_filename }}</strong>
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- JOB DESCRIPTION -->
+
+    <div class="card">
+
+        <h2>💼 Job Description</h2>
+
+        <form
+            action="/match"
+            method="POST"
+        >
+
+            <!-- Keep candidate information -->
+
+            <input
+                type="hidden"
+                name="name"
+                value="{{ name or '' }}"
+            >
+
+            <input
+                type="hidden"
+                name="email"
+                value="{{ email or '' }}"
+            >
+
+
+            <textarea
+                name="job_description"
+                placeholder="Enter the complete job description..."
+                required
+            >{{ job_description or '' }}</textarea>
+
+
+            <button type="submit">
+                🔍 Analyze & Rank Resumes
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- RESULTS -->
+
+    {% if results %}
+
+    <div class="card results-card">
+
+        <h2>📊 Resume Matching Results</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Rank</th>
+                    <th>Resume</th>
+                    <th>Match Score</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for result in results %}
+
+                <tr>
+
+                    <td>
+                        🏆 #{{ loop.index }}
+                    </td>
+
+                    <td>
+                        📄 {{ result.filename }}
+                    </td>
+
+                    <td>
+
+                        <strong>
+                            {{ result.score }}%
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% endif %}
+
+
+</div>
+
+</body>
+
+</html>
+
+
+
+
+
+
